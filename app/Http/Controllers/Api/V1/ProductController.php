@@ -86,11 +86,19 @@ class ProductController extends Controller
 
     public function destroy(string $id)
     {
-        $product = Product::find($id);
+        $product = Product::withTrashed()->find($id);
+
         if (!$product) {
             return response()->json(['message' => 'Товар не найден'], 404);
         }
+
+        if ($product->trashed()) {
+            return response()->json(['message' => 'Товар уже удален'], 400);
+        }
+
         $product->delete();
+
         return response()->json(['message' => 'Товар удален'], 200);
     }
+
 }
