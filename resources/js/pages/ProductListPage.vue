@@ -61,6 +61,7 @@ import { useProductApi } from '../composables/useProductApi'
 import ProductCard from '../components/ProductCard.vue'
 import CategorySelect from '../components/filters/CategorySelect.vue'
 import { Search } from '@element-plus/icons-vue'
+import { useDebouncedRef } from '../composables/useDebounce'
 
 const emit = defineEmits(['open'])
 
@@ -72,15 +73,11 @@ const perPage = ref(12)
 const perPageOptions = [12, 24, 48]
 const filters = ref({ category: null, q: '' })
 
-const searchInput = ref('')
-let searchTimer = null
-watch(searchInput, (v) => {
-  if (searchTimer) clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => {
-    filters.value.q = v
-    page.value = 1
-    fetchItems()
-  }, 400)
+const { input: searchInput, debounced: debouncedSearch } = useDebouncedRef('', 400)
+watch(debouncedSearch, (v) => {
+  filters.value.q = v
+  page.value = 1
+  fetchItems()
 })
 
 watch(() => filters.value.category, () => {

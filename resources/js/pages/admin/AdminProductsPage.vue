@@ -68,6 +68,7 @@ import { Search } from '@element-plus/icons-vue'
 import CategorySelect from '../../components/filters/CategorySelect.vue'
 import { useAdminProductApi } from '../../composables/useAdminProductApi'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { useDebouncedRef } from '../../composables/useDebounce'
 
 const { list, remove, loading, error } = useAdminProductApi()
 
@@ -76,16 +77,12 @@ const meta = ref({ page: 1, per_page: 12, total: 0, last_page: 1 })
 const page = ref(1)
 const perPage = ref(12)
 const filters = ref({ category: null, q: '' })
-const searchInput = ref('')
-let searchTimer = null
+const { input: searchInput, debounced: debouncedSearch } = useDebouncedRef('', 400)
 
-watch(searchInput, (v) => {
-  if (searchTimer) clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => {
-    filters.value.q = v
-    page.value = 1
-    fetchItems()
-  }, 400)
+watch(debouncedSearch, (v) => {
+  filters.value.q = v
+  page.value = 1
+  fetchItems()
 })
 
 watch(() => filters.value.category, () => {
