@@ -36,7 +36,7 @@ import ProductShowPage from './pages/ProductShowPage.vue'
 import LoginPage from './pages/LoginPage.vue'
 import AdminProductsPage from './pages/admin/AdminProductsPage.vue'
 import AdminProductFormPage from './pages/admin/AdminProductFormPage.vue'
-import { useAuthStore } from './stores/auth'
+import { useAuth } from './composables/useAuth'
 
 function parseRoute() {
   const path = window.location.pathname
@@ -70,8 +70,8 @@ function goHome() {
   window.location.href = `/`
 }
 
-const auth = useAuthStore()
-const isAuth = computed(() => auth.isAuthenticated)
+const { isAuthenticated, logout: doLogout } = useAuth()
+const isAuth = isAuthenticated
 
 onMounted(() => {
   // Simple guard for admin routes
@@ -86,9 +86,8 @@ onMounted(() => {
   })
 })
 
-function logout() {
-  auth.logout()
-}
+// метод остаётся для совместимости с шаблоном
+function logout() { doLogout() }
 </script>
 
 <style scoped>

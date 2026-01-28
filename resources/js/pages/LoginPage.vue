@@ -28,12 +28,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useAuthStore } from '../stores/auth'
+import { useAuth } from '../composables/useAuth'
 
 const formRef = ref()
 const loading = ref(false)
 const globalError = ref(null)
-const auth = useAuthStore()
+const { login } = useAuth()
 
 const form = ref({ email: '', password: '' })
 const remember = ref(true)
@@ -59,7 +59,7 @@ async function onSubmit() {
 
   loading.value = true
   try {
-    await auth.login(form.value.email, form.value.password, remember.value)
+    await login(form.value.email, form.value.password, remember.value)
 
     // Simple success message and redirect
     if (window.ElMessage) {

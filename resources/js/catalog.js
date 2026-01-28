@@ -6,7 +6,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import ElementPlus, { ElMessage } from 'element-plus'
 import App from './App.vue'
-import { useAuthStore } from './stores/auth'
+import { useAuth } from './composables/useAuth'
 
 // Подключаем настроенный axios с перехватчиками
 import axios from './plugins/axios'
@@ -21,9 +21,9 @@ app.use(ElementPlus)
 // Делает ElMessage доступным глобально для перехватчиков и страниц
 window.ElMessage = ElMessage
 
-// Инициализируем auth‑store и мост для перехватчиков
+// Инициализируем авторизацию и мосты для перехватчиков через composable
 try {
-  const auth = useAuthStore()
-  auth.init()
+  const { init } = useAuth()
+  init()
 } catch (_) {}
 app.mount('#app')
