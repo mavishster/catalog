@@ -6,38 +6,6 @@ export function useAdminProductApi() {
     const error = ref(null)
     const lastStatus = ref(null)
 
-    const list = async (params = {}) => {
-        loading.value = true
-        error.value = null
-        try {
-            const {data} = await window.axios.get('/api/v1/products', {params})
-            lastStatus.value = 200
-            return data
-        } catch (e) {
-            lastStatus.value = e?.response?.status || null
-            error.value = getErrorMessage(e)
-            throw e
-        } finally {
-            loading.value = false
-        }
-    }
-
-    const get = async (id) => {
-        loading.value = true
-        error.value = null
-        try {
-            const {data} = await window.axios.get(`/api/v1/products/${id}`)
-            lastStatus.value = 200
-            return data
-        } catch (e) {
-            lastStatus.value = e?.response?.status || null
-            error.value = getErrorMessage(e)
-            throw e
-        } finally {
-            loading.value = false
-        }
-    }
-
     const create = async (payload) => {
         loading.value = true
         error.value = null
@@ -86,21 +54,5 @@ export function useAdminProductApi() {
         }
     }
 
-    const listCategories = async () => {
-        loading.value = true
-        error.value = null
-        try {
-            const {data} = await window.axios.get('/api/v1/categories')
-            lastStatus.value = 200
-            return data
-        } catch (e) {
-            lastStatus.value = e?.response?.status || null
-            error.value = getErrorMessage(e)
-            throw e
-        } finally {
-            loading.value = false
-        }
-    }
-
-    return {loading, error, lastStatus, list, get, create, update, remove, listCategories}
+    return {loading, error, lastStatus, create, update, remove}
 }

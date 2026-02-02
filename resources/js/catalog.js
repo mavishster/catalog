@@ -5,6 +5,8 @@ import 'element-plus/dist/index.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import ElementPlus, { ElMessage } from 'element-plus'
+import ru from 'element-plus/es/locale/lang/ru'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
 import { useAuth } from './composables/useAuth'
 
@@ -16,7 +18,14 @@ window.axios = axios
 const app = createApp(App)
 const pinia = createPinia()
 app.use(pinia)
-app.use(ElementPlus)
+app.use(ElementPlus, { locale: ru })
+
+// Глобальная регистрация иконок Element Plus
+try {
+  for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+  }
+} catch (_) {}
 
 // Делает ElMessage доступным глобально для перехватчиков и страниц
 window.ElMessage = ElMessage
