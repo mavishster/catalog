@@ -9,12 +9,12 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Home');
+        return Inertia::render('ProductListPage');
     }
 
     public function show(string $id)
     {
-        return Inertia::render('Product/Show', [
+        return Inertia::render('Product/ProductShow', [
             'id' => (int) $id,
         ]);
     }
