@@ -5,7 +5,7 @@
 ## 🧰 Стек технологий
 
 - Backend: Laravel 12, PHP 8.2+, REST API, Laravel Sanctum
-- Frontend: Vue 3 (Composition API), InertiaJS, Vite, Tailwind CSS, Element Plus
+- Frontend: Vue 3 (Composition API), Inertia.js, Vite, Tailwind CSS, Element Plus
 - База данных: PostgreSQL
 
 ---
@@ -23,7 +23,7 @@
 - Вход с логином/паролем (Sanctum)
 - Добавление, редактирование и удаление товаров
 - Управление категориями
-- Токен хранится в `localStorage`
+- Токен хранится в куках (Inertia/Session) или `localStorage` (для API)
 
 ### API‑эндпоинты
 
@@ -33,7 +33,7 @@
 - `POST /api/login` — аутентификация, возвращает токен
 - `POST /api/products`, `PUT /api/products/{id}`, `DELETE /api/products/{id}` — создание, редактирование, удаление товара (защищено)
 
-### Структура данных
+### Структура данных (PostgreSQL)
 
 #### Товар (Product)
 
@@ -91,6 +91,29 @@ composer run dev
 
 - Backend API: http://127.0.0.1:8000
 - Frontend (Vite): http://127.0.0.1:5173
+
+### UI: Element Plus
+
+В проект интегрирован UI‑фреймворк Element Plus с русской локалью и глобально зарегистрированными иконками.
+
+- Точки входа: `resources/js/app.js` (Inertia) и `resources/js/catalog.js` (Standalone Vue)
+- Глобальное подключение:
+
+```js
+import ElementPlus, { ElMessage } from 'element-plus'
+import ru from 'element-plus/es/locale/lang/ru'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import 'element-plus/dist/index.css'
+
+app.use(ElementPlus, { size: 'small', locale: ru })
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
+```
+
+- Пример использования компонентов: см. `resources/js/App.vue`, `resources/js/Pages/ProductListPage.vue`
+- Глобальные уведомления: через `ElMessage` (доступен как `window.ElMessage` для перехватчиков axios)
+- Макет приложения: `resources/js/App.vue` используется как персистентный Layout для Inertia.
 
 ### Детальная установка
 
@@ -181,26 +204,33 @@ npm install
 ```bash
 php artisan migrate --seed
 ```
+### Через Docker (локально или для разработки)
 
-6. Запустить сервера разработки
+1. Установить Docker и Docker Compose.
 
+2. Настроить `.env` (можно скопировать из `.env.example`). Для работы внутри Docker укажите `DB_HOST=db`.
+
+3. Запустить контейнеры:
 ```bash
-composer run dev
+docker-compose up -d --build
 ```
 
-### Production‑сборка
-
+4. Применить миграции внутри контейнера:
 ```bash
-npm run build
-php artisan config:cache
-php artisan route:cache
+docker exec -it catalog_app bash -lc "php artisan migrate --seed"
 ```
 
-Деплойте `public/` через Nginx/Apache с указанием `public/index.php`.
+После этого приложение будет доступно по адресу:
+- Frontend: http://localhost:5173 (через контейнер `node`)
+- Backend/API: http://localhost:8080 (через `nginx` и `app`)
 
-### Полезные команды
+5. Полезные команды Docker:
+- Остановка: `docker-compose down`
+- Просмотр логов: `docker-compose logs -f`
+- Пересборка: `docker-compose up -d --build`
 
-- Запуск тестов: `php artisan test`
+### Полезные команды (Artisan)
+
 - Очистка кэшей: `php artisan optimize:clear`
 - Пересоздание БД с сидерами: `php artisan migrate:fresh --seed`
-
+- Запуск тестов: `php artisan test`
