@@ -35,6 +35,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useProductApi } from '../../composables/useProductApi'
 import { useAdminProductApi } from '../../composables/useAdminProductApi'
 import { ElMessage } from 'element-plus'
 
@@ -43,7 +44,8 @@ const props = defineProps({
   id: { type: [Number, String], default: null },
 })
 
-const { get, create, update, listCategories, loading, error } = useAdminProductApi()
+const { create, update, loading, error } = useAdminProductApi()
+const { get, listCategories } = useProductApi()
 const formRef = ref()
 const categories = ref([])
 const saving = ref(false)

@@ -24,9 +24,11 @@
 
 <script setup>
 import { onMounted, ref, watch, computed } from 'vue'
-import { useProductApi } from '../composables/useProductApi'
+import { useProductApi } from '../../composables/useProductApi'
 
 const props = defineProps({ id: { type: [String, Number], required: true } })
+defineEmits(['back'])
+
 const { get, loading, error } = useProductApi()
 const product = ref(null)
 

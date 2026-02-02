@@ -66,11 +66,13 @@
 import { ref, onMounted, watch } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import CategorySelect from '../../components/filters/CategorySelect.vue'
+import { useProductApi } from '../../composables/useProductApi'
 import { useAdminProductApi } from '../../composables/useAdminProductApi'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { useDebouncedRef } from '../../composables/useDebounce'
 
-const { list, remove, loading, error } = useAdminProductApi()
+const { remove, loading, error } = useAdminProductApi()
+const { list } = useProductApi()
 
 const items = ref([])
 const meta = ref({ page: 1, per_page: 12, total: 0, last_page: 1 })

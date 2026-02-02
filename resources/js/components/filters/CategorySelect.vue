@@ -4,10 +4,14 @@
         filterable
         clearable
         placeholder="Категория"
-        class="w-full sm:w-64"
+        class="w-full"
         :loading="loading"
     >
-        <el-option :key="0" :label="'Все категории'" :value="null"/>
+        <el-option
+            :key="0"
+            label="Все категории"
+            :value="null"
+        />
         <el-option
             v-for="c in categories"
             :key="c.id"
@@ -18,11 +22,11 @@
 </template>
 
 <script setup>
-import {ref, onMounted, watch} from 'vue'
-import {useProductApi} from '../../composables/useProductApi'
+import { ref, onMounted, watch } from 'vue'
+import { useProductApi } from '../../composables/useProductApi'
 
 const props = defineProps({
-    modelValue: {type: [Number, null], default: null},
+    modelValue: { type: [Number, null], default: null },
 })
 const emit = defineEmits(['update:modelValue'])
 
@@ -31,17 +35,16 @@ watch(() => props.modelValue, v => (model.value = v))
 watch(model, v => emit('update:modelValue', v))
 
 const categories = ref([])
-const {listCategories, loading} = useProductApi()
+const { listCategories, loading } = useProductApi()
 
 onMounted(async () => {
-    try {
-        const res = await listCategories()
-        categories.value = res.data || []
-    } catch (_) {
-        // ошибки обрабатываются наверху
-    }
+    const res = await listCategories()
+    categories.value = res.data || []
 })
 </script>
 
 <style scoped>
+.el-select {
+    width: 100%;
+}
 </style>
